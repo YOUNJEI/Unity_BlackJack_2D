@@ -391,7 +391,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 8a03f42467fe44449a4a5f3a7123fb55, type: 3}
   - {fileID: 21300000, guid: 1d00b443f02fe4bcc8177f3b813059a7, type: 3}
   - {fileID: 21300000, guid: 18644cc5338bf406a8ad048b67bc5359, type: 3}
-  cardPrefab: {fileID: 252019539163167865, guid: 387465e844d0e4fb0bd94f27639100a4, type: 3}
 --- !u!4 &372585855
 Transform:
   m_ObjectHideFlags: 0
@@ -687,56 +686,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a620a15c9ce24e3a87730679b228074, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sprites:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  cardPrefab: {fileID: 252019539163167865, guid: 387465e844d0e4fb0bd94f27639100a4, type: 3}
