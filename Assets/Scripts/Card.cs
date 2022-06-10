@@ -60,6 +60,38 @@ public class Card : MonoBehaviour
             GameObject.Find("SpriteManager").GetComponent<SpriteManager>().GetSprite(n);
     }
 
+    public void ChangeImageToBack()
+    {
+        transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().sprite =
+            GameObject.Find("SpriteManager").GetComponent<SpriteManager>().GetSprite(0);
+    }
+
+    public void ChangeImageToOrigin()
+    {
+        int n = this.cardNum;
+
+        switch (this.cardSymbol)
+        {
+            case "Heart":
+                n += 0;
+                break;
+
+            case "Dia":
+                n += 13;
+                break;
+
+            case "Clover":
+                n += 26;
+                break;
+
+            case "Spade":
+                n += 39;
+                break;
+        }
+        // 자식 객체의 스프라이트렌더러를 변경하여 카드 이미지 표현
+        transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().sprite =
+            GameObject.Find("SpriteManager").GetComponent<SpriteManager>().GetSprite(n);
+    }
 
     void Start()
     {
