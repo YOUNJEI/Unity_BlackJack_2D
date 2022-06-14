@@ -25,6 +25,7 @@ public class Deck : MonoBehaviour
             {
                 cards[(sym * 13) + (i - 1)] = Instantiate<Card>(cardPrefab, transform.position, transform.rotation);
                 cards[(sym * 13) + (i - 1)].Setup(i, symbols[sym]);
+                cards[(sym * 13) + (i - 1)].ChangeImageToBack();
             }
         }
     }
