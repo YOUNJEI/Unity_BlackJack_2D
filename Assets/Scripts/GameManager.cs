@@ -63,6 +63,12 @@ public class GameManager : MonoBehaviour
         BTNStand.gameObject.SetActive(true);
         BTNHit.gameObject.SetActive(true);
 
+        // 버스트 체크 변수를 false로 초기화
+        player.SetIsBurst(false);
+        dealer.SetIsBurst(false);
+
+        // 게임 시작
+        // 플레이어와 딜러에게 카드 2장씩 배분
         StartCoroutine(StartGame());
     }
 
@@ -96,10 +102,18 @@ public class GameManager : MonoBehaviour
 
     private void HitClicked()
     {
-
+        StartCoroutine(PlayerHit());
     }
 
-    // 배ㅐ
+    private IEnumerator PlayerHit()
+    {
+        if (player.GetIsBurst() == true)
+            yield break;
+        player.GetCard();
+        yield return (new WaitForSeconds(0.7f));
+    }
+
+    // 배팅
     private void BetClicked(int btnIndex)
     {
         player.Betting(btnIndex);

@@ -35,7 +35,7 @@ public class Deck : MonoBehaviour
         // 덱 새로 생성
         if (curIdx >= cards.Length)
         {
-
+            
         }
         curIdx++;
         return (cards[curIdx - 1]);

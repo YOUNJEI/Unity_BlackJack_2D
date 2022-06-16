@@ -15,6 +15,18 @@ public class Player : MonoBehaviour
     private List<Card> playerCards;
     private long money;
     private long betMoney;
+    private int sortLayerIdx = 1;
+    private bool isBurst;
+
+    public void SetIsBurst(bool boolean)
+    {
+        isBurst = boolean;
+    }
+
+    public bool GetIsBurst()
+    {
+        return (isBurst);
+    }
 
     // 플레이어 객체 생성시
     // 플레이어 이름, 보유 현금, 배팅 금액 초기화
@@ -29,6 +41,7 @@ public class Player : MonoBehaviour
         
         money = 1000000;
         betMoney = 0;
+        isBurst = false;
         handText.gameObject.SetActive(false);
         UIManager.instance.UpdatePlayerInfo(playerInfoText, playerName, money);
     }
@@ -36,13 +49,38 @@ public class Player : MonoBehaviour
     public void GetCard()
     {
         playerCards.Add(Deck.m_instance.Deal());
-        playerCards[playerCards.Count - 1].Move(transform.GetChild(playerCards.Count - 1).transform);
+
+        // 스프라이트가 겹쳐져도 이미지가 잘 반영될수 있게
+        // 각 스프라이트의 sortingOrder 를 조정
+        SpriteRenderer spriteRenderer = playerCards[playerCards.Count - 1].GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.sortingOrder = sortLayerIdx++;
+            spriteRenderer = null;
+        }
+        spriteRenderer = playerCards[playerCards.Count - 1].transform.GetChild(0).GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.sortingOrder = sortLayerIdx++;
+            spriteRenderer = null;
+        }
+        // 카드 이동효과
+        Vector3 target = transform.GetChild(0).position     // 카드가 놓일 기본 위치
+            + new Vector3(0.5f * (playerCards.Count - 1), 0, -0.5f * (playerCards.Count - 1));
+        playerCards[playerCards.Count - 1].Move(target);
+        
         if (!isDealer)
             playerCards[playerCards.Count - 1].ChangeImageToOrigin();
         playerScore[0] += playerCards[playerCards.Count - 1].GetCardNum();
 
         if (!isDealer)
             UIManager.instance.UpdatePlayerHands(handText, playerScore[0]);
+
+        if (playerScore[0] > 21)
+        {
+            // Action() 파산에 대한
+            isBurst = true;
+        }
     }
 
     public void Hit()
