@@ -21,6 +21,10 @@ public class UIManager : MonoBehaviour
     // 플레이어 이름, 보유 현금 UI 업데이트
     public void UpdatePlayerInfo(Text refText, string playerID, long money)
     {
+        // 널가드
+        if (refText == null || playerID == null)
+            return;
+
         refText.text = "ID: " + playerID + "\n" + "money: " + money;
         refText.gameObject.SetActive(true);
     }
@@ -29,7 +33,21 @@ public class UIManager : MonoBehaviour
     // 배팅금액 UI 업데이트
     public void UpdatePlayerBet(Text refText, long betMoney)
     {
+        // 널가드
+        if (refText == null)
+            return;
+
         refText.text = "Bet: " + betMoney;
+        refText.gameObject.SetActive(true);
+    }
+
+    public void UpdatePlayerHands(Text refText, int score)
+    {
+        // 널가드
+        if (refText == null)
+            return;
+
+        refText.text = "Hand: " + score;
         refText.gameObject.SetActive(true);
     }
 }

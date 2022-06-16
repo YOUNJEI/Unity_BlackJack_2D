@@ -44,7 +44,43 @@ public class GameManager : MonoBehaviour
 
     private void DealClicked()
     {
-        throw new NotImplementedException();
+        // 배팅금액이 0원 이하
+        if (player.GetBetMoney() <= 0)
+        {
+            Debug.Log("플레이어 배팅금액이 0원 이하입니다.");
+            return;
+        }
+
+        // 배팅 UI 비활성화
+        {
+            BTNDeal.gameObject.SetActive(false);
+            BTNReset.gameObject.SetActive(false);
+            for (int i = 0; i < BTNBet.Length; i++)
+                BTNBet[i].gameObject.SetActive(false);
+        }
+
+        // 게임 UI (Stand버튼 & Hit버튼) 활성화
+        BTNStand.gameObject.SetActive(true);
+        BTNHit.gameObject.SetActive(true);
+
+        StartCoroutine(StartGame());
+    }
+
+    private IEnumerator StartGame()
+    {
+        player.GetCard();
+        yield return (new WaitForSeconds(0.7f));
+
+        dealer.GetCard();
+        yield return (new WaitForSeconds(0.7f));
+
+        player.GetCard();
+        yield return (new WaitForSeconds(0.7f));
+
+        dealer.GetCard();
+        yield return (new WaitForSeconds(0.7f));
+
+        dealer.DealerCardOpen(0);
     }
 
     // 배팅 초기화
@@ -63,7 +99,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    // 배팅
+    // 배ㅐ
     private void BetClicked(int btnIndex)
     {
         player.Betting(btnIndex);

@@ -10,6 +10,11 @@ public class Card : MonoBehaviour
     private int cardNum;
     private string cardSymbol;
 
+    // 움직이는 애니메이션 구현하기 위한 필드
+    public float moveSpeed = 30f;
+    private bool toMove;
+    private Transform target;
+
     public int GetCardNum()
     {
         return (this.cardNum);
@@ -93,14 +98,26 @@ public class Card : MonoBehaviour
             GameObject.Find("SpriteManager").GetComponent<SpriteManager>().GetSprite(n);
     }
 
+    public void Move(Transform targetInfo)
+    {
+        toMove = true;
+        target = targetInfo;
+    }
+
     void Start()
     {
-
+        toMove = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (toMove)
+        {
+            transform.position =
+                Vector3.MoveTowards(transform.position, target.position, moveSpeed * Time.deltaTime);
+            if (transform.position == target.position)
+                toMove = false;
+        }
     }
 }
