@@ -19,15 +19,15 @@ public class Player : MonoBehaviour
     private bool isBurst;
     private int hasAce;
 
-    public void SetIsBurst(bool boolean)
-    {
-        isBurst = boolean;
-    }
-
-    public bool GetIsBurst()
-    {
-        return (isBurst);
-    }
+    public string GetPlayerName() { return (playerName); }
+    public int GetScore() { return (playerScore); }
+    public void SetIsDealer(bool boolean) { isDealer = boolean; }
+    public void SetIsBurst(bool boolean) { isBurst = boolean; }
+    public bool GetIsBurst() { return (isBurst); }
+    public void SetMoney(long m) { money = m; }
+    public long GetMoney() { return (money); }
+    public void SetBetMoney(long m) { betMoney = m; }
+    public long GetBetMoney() { return (betMoney); }
 
     public void GameInitPlayer()
     {
@@ -59,7 +59,7 @@ public class Player : MonoBehaviour
 
     public void GetCard()
     {
-        playerCards.Add(Deck.m_instance.Deal());
+        playerCards.Add(Deck.instance.Deal());
 
         // 스프라이트가 겹쳐져도 이미지가 잘 반영될수 있게
         // 각 스프라이트의 sortingOrder 를 조정
@@ -109,6 +109,7 @@ public class Player : MonoBehaviour
 
         if (playerScore > 21)
         {
+            bool burst = true;
             if (hasAce > 0)
             {
                 while (hasAce > 0 && playerScore > 21)
@@ -119,22 +120,12 @@ public class Player : MonoBehaviour
                 if (playerScore <= 21)
                 {
                     UIManager.instance.UpdatePlayerHands(handText, playerScore);
-                    return;
+                    burst = false;
                 }
             }
-            // Action() 파산에 대한
-            isBurst = true;
+            if (burst)
+                isBurst = true;
         }
-    }
-
-    public void Hit()
-    {
-        GetCard();
-    }
-
-    public int GetScore()
-    {
-        return (playerScore);
     }
 
     // 배팅
@@ -188,15 +179,22 @@ public class Player : MonoBehaviour
         UIManager.instance.UpdatePlayerInfo(playerInfoText, playerName, money);
     }
 
-    public long GetBetMoney()
-    {
-        return (betMoney);
-    }
-
     public void DealerCardOpen(int cardIdx)
     {
         if (cardIdx < 0 || cardIdx > playerCards.Count - 1)
             return;
         playerCards[cardIdx].ChangeImageToOrigin();
+    }
+
+    public void CardReturn() { StartCoroutine(CoroutineCardReturn()); }
+
+    private IEnumerator CoroutineCardReturn()
+    {
+        for (int i = 0; i < playerCards.Count; i++)
+        {
+            Deck.instance.UsedCardCollect(playerCards[i]);
+            yield return (new WaitForSeconds(0.7f));
+            playerCards[i].gameObject.SetActive(false);
+        }
     }
 }

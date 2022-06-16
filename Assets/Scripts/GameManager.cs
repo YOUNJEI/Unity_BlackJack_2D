@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     public Player player;
     public Player dealer;
 
+    private bool trigger;   // 카드 회수 진행 중 UI를 비활성화 하기 위한 변수
+
     private static GameManager m_instance;
     public static GameManager instance
     {
@@ -40,15 +42,21 @@ public class GameManager : MonoBehaviour
         BTNBet[2].onClick.AddListener(() => BetClicked(2));
         BTNBet[3].onClick.AddListener(() => BetClicked(3));
 
+        trigger = false;
     }
 
     private void DealClicked()
+    {
+        StartCoroutine(Deal());
+    }
+
+    private IEnumerator Deal()
     {
         // 배팅금액이 0원 이하
         if (player.GetBetMoney() <= 0)
         {
             Debug.Log("플레이어 배팅금액이 0원 이하입니다.");
-            return;
+            yield break;
         }
 
         // 배팅 UI 비활성화
@@ -62,6 +70,8 @@ public class GameManager : MonoBehaviour
         // 게임 UI (Stand버튼 & Hit버튼) 활성화
         BTNStand.gameObject.SetActive(true);
         BTNHit.gameObject.SetActive(true);
+        BTNStand.interactable = false;
+        BTNHit.interactable = false;
 
         // 새로운 게임 시작 전. 초기화 작업 진행
         player.GameInitPlayer();
@@ -70,6 +80,10 @@ public class GameManager : MonoBehaviour
         // 게임 시작
         // 플레이어와 딜러에게 카드 2장씩 배분
         StartCoroutine(StartGame());
+        yield return (new WaitForSeconds(3f));
+        BTNStand.interactable = true;
+        if (player.GetScore() < 21)
+            BTNHit.interactable = true;
     }
 
     private IEnumerator StartGame()
@@ -97,25 +111,115 @@ public class GameManager : MonoBehaviour
 
     private void StandClicked()
     {
-
+        BTNStand.interactable = false;
+        BTNHit.interactable = false;
+        StartCoroutine(CardOpen());
     }
 
     private void HitClicked()
     {
-        StartCoroutine(PlayerHit());
+        StartCoroutine(Hit());
     }
 
-    private IEnumerator PlayerHit()
+    private IEnumerator Hit()
     {
-        if (player.GetIsBurst() == true)
+        if (player.GetScore() >= 21)
             yield break;
+        BTNHit.interactable = false;
         player.GetCard();
         yield return (new WaitForSeconds(0.7f));
+        if (player.GetScore() < 21)
+            BTNHit.interactable = true;
     }
 
     // 배팅
     private void BetClicked(int btnIndex)
     {
         player.Betting(btnIndex);
+    }
+
+    private IEnumerator CardOpen()
+    {
+        // 뒷면의 카드 공개 및 점수 UI 표시
+        dealer.DealerCardOpen(1);
+        UIManager.instance.UpdatePlayerHands(dealer.handText, dealer.GetScore());
+        yield return (new WaitForSeconds(0.7f));
+
+        // 딜러 추가 카드
+        dealer.SetIsDealer(false);
+        while (dealer.GetScore() < 17)
+        {
+            dealer.GetCard();
+            yield return (new WaitForSeconds(0.7f));
+        }
+        dealer.SetIsDealer(true);
+        yield return (new WaitForSeconds(1.5f));
+
+        if (player.GetIsBurst() == true)
+        {
+            player.SetBetMoney(0);
+            Debug.Log("플레이어 파산");
+        }
+        else if (dealer.GetIsBurst() == true)
+        {
+            player.SetMoney((long)(player.GetMoney() + player.GetBetMoney() * 2.5f));
+            player.SetBetMoney(0);
+            Debug.Log("딜러 파산");
+        }
+        else if (dealer.GetScore() > player.GetScore())
+        {
+            player.SetBetMoney(0);
+            Debug.Log("플레이어 패배");
+        }
+        else if (dealer.GetScore() == player.GetScore())
+        {
+            player.SetMoney(player.GetMoney() + player.GetBetMoney());
+            player.SetBetMoney(0);
+            Debug.Log("무승부");
+        }
+        else
+        {
+            player.SetMoney((long)(player.GetMoney() + player.GetBetMoney() * 2.5f));
+            player.SetBetMoney(0);
+            Debug.Log("플레이어 승리");
+        }
+        player.CardReturn();
+        dealer.CardReturn();
+        BTNStand.gameObject.SetActive(false);
+        BTNHit.gameObject.SetActive(false);
+        BTNStand.interactable = true;
+        BTNHit.interactable = true;
+        
+
+        BTNDeal.gameObject.SetActive(true);
+        BTNReset.gameObject.SetActive(true);
+        BTNDeal.interactable = false;
+        BTNReset.interactable = false;
+        for (int i = 0; i < BTNBet.Length; i++)
+        {
+            BTNBet[i].gameObject.SetActive(true);
+            BTNBet[i].interactable = false;
+        }
+        trigger = true;
+        player.handText.gameObject.SetActive(false);
+        UIManager.instance.UpdatePlayerInfo(player.playerInfoText, player.GetPlayerName(), player.GetMoney());
+        dealer.handText.gameObject.SetActive(false);
+    }
+
+    void Update()
+    {
+        if (trigger)
+        {
+            if (Deck.instance.GetIsCollecting() == false)
+            {
+                BTNDeal.interactable = true;
+                BTNReset.interactable = true;
+                for (int i = 0; i < BTNBet.Length; i++)
+                {
+                    BTNBet[i].interactable = true;
+                }
+                trigger = false;
+            }
+        }
     }
 }
