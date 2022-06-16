@@ -19,13 +19,13 @@ public class Deck : MonoBehaviour
 
     private Card[] cards;
     private static string[] symbols = { "Heart", "Dia", "Clover", "Spade" };
-    private const int cardCount = 53;
+    private const int cardCount = 52;
     private int curIdx = 0;
-    private bool isCollecting;  // 덱으로 카드가 회수 진행중인지 확인할 변수
+    private int toCollect;  // 게임 종료 후 회수 해야하는 카드 수
 
     public int GetCurIdx() { return (curIdx); }
-    public void SetIsCollecting(bool boolean) { isCollecting = boolean; }
-    public bool GetIsCollecting() { return (isCollecting); }
+    public void SetToCollect(int n) { toCollect = n; }
+    public int GetToCollect() { return (toCollect); }
 
     // Start is called before the first frame update
     void Start()
@@ -43,12 +43,13 @@ public class Deck : MonoBehaviour
                 cards[(sym * 13) + (i - 1)].ChangeImageToBack();
             }
         }
+        toCollect = 0;
     }
 
     public Card Deal()
     {
         // 덱 새로 생성
-        if (curIdx >= cards.Length - 1)
+        if (curIdx >= cards.Length)
         {
             // Shuffle
             for (int i = 0; i < cards.Length; i++)

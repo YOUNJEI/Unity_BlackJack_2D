@@ -28,6 +28,7 @@ public class Player : MonoBehaviour
     public long GetMoney() { return (money); }
     public void SetBetMoney(long m) { betMoney = m; }
     public long GetBetMoney() { return (betMoney); }
+    public int GetCardCount() { return (playerCards.Count); }
 
     public void GameInitPlayer()
     {

@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     public Player player;
     public Player dealer;
 
-    private bool trigger;   // 카드 회수 진행 중 UI를 비활성화 하기 위한 변수
+    private bool trigger;   // UI 비활성화용 변수
 
     private static GameManager m_instance;
     public static GameManager instance
@@ -200,6 +200,7 @@ public class GameManager : MonoBehaviour
             BTNBet[i].gameObject.SetActive(true);
             BTNBet[i].interactable = false;
         }
+        Deck.instance.SetToCollect(player.GetCardCount() + dealer.GetCardCount());
         trigger = true;
         player.handText.gameObject.SetActive(false);
         UIManager.instance.UpdatePlayerInfo(player.playerInfoText, player.GetPlayerName(), player.GetMoney());
@@ -210,14 +211,12 @@ public class GameManager : MonoBehaviour
     {
         if (trigger)
         {
-            if (Deck.instance.GetIsCollecting() == false)
+            if (Deck.instance.GetToCollect() == 0)
             {
                 BTNDeal.interactable = true;
                 BTNReset.interactable = true;
                 for (int i = 0; i < BTNBet.Length; i++)
-                {
                     BTNBet[i].interactable = true;
-                }
                 trigger = false;
             }
         }

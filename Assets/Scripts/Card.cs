@@ -117,6 +117,7 @@ public class Card : MonoBehaviour
                 Vector3.MoveTowards(transform.position, target, moveSpeed * Time.deltaTime);
             if (transform.position == target)
             {
+                Deck.instance.SetToCollect(Deck.instance.GetToCollect() - 1);
                 toMove = false;
             }
         }
