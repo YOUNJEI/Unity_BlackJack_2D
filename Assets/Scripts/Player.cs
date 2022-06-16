@@ -11,12 +11,13 @@ public class Player : MonoBehaviour
 
     public bool isDealer = false;
     private string playerName;
-    private List<int> playerScore;
+    private int playerScore;
     private List<Card> playerCards;
     private long money;
     private long betMoney;
-    private int sortLayerIdx = 1;
+    private int sortLayerIdx;
     private bool isBurst;
+    private int hasAce;
 
     public void SetIsBurst(bool boolean)
     {
@@ -28,20 +29,30 @@ public class Player : MonoBehaviour
         return (isBurst);
     }
 
+    public void GameInitPlayer()
+    {
+        playerScore = 0;
+        playerCards.Clear();
+        sortLayerIdx = 1;
+        isBurst = false;
+        hasAce = 0;
+    }
+
     // 플레이어 객체 생성시
     // 플레이어 이름, 보유 현금, 배팅 금액 초기화
     // UI 업데이트
     void Start()
     {
         playerName = "void";
-        playerScore = new List<int>();
-        playerScore.Add(0);
+        playerScore = 0;
 
         playerCards = new List<Card>();
         
         money = 1000000;
         betMoney = 0;
+        sortLayerIdx = 1;
         isBurst = false;
+        hasAce = 0;
         handText.gameObject.SetActive(false);
         UIManager.instance.UpdatePlayerInfo(playerInfoText, playerName, money);
     }
@@ -71,13 +82,46 @@ public class Player : MonoBehaviour
         
         if (!isDealer)
             playerCards[playerCards.Count - 1].ChangeImageToOrigin();
-        playerScore[0] += playerCards[playerCards.Count - 1].GetCardNum();
 
-        if (!isDealer)
-            UIManager.instance.UpdatePlayerHands(handText, playerScore[0]);
-
-        if (playerScore[0] > 21)
+        int toAddScore;
+        switch (playerCards[playerCards.Count - 1].GetCardNum())
         {
+            // J, Q, K
+            case 11:
+            case 12:
+            case 13:
+                toAddScore = 10;
+                break;
+
+            // ACE
+            case 1:
+                toAddScore = 11;
+                hasAce++;
+                break;
+
+            default:
+                toAddScore = playerCards[playerCards.Count - 1].GetCardNum();
+                break;
+        }
+        playerScore += toAddScore;
+        if (!isDealer)
+            UIManager.instance.UpdatePlayerHands(handText, playerScore);
+
+        if (playerScore > 21)
+        {
+            if (hasAce > 0)
+            {
+                while (hasAce > 0 && playerScore > 21)
+                {
+                    playerScore -= 10;
+                    hasAce--;
+                }
+                if (playerScore <= 21)
+                {
+                    UIManager.instance.UpdatePlayerHands(handText, playerScore);
+                    return;
+                }
+            }
             // Action() 파산에 대한
             isBurst = true;
         }
@@ -90,7 +134,7 @@ public class Player : MonoBehaviour
 
     public int GetScore()
     {
-        return (playerScore[0]);
+        return (playerScore);
     }
 
     // 배팅

@@ -63,9 +63,9 @@ public class GameManager : MonoBehaviour
         BTNStand.gameObject.SetActive(true);
         BTNHit.gameObject.SetActive(true);
 
-        // 버스트 체크 변수를 false로 초기화
-        player.SetIsBurst(false);
-        dealer.SetIsBurst(false);
+        // 새로운 게임 시작 전. 초기화 작업 진행
+        player.GameInitPlayer();
+        dealer.GameInitPlayer();
 
         // 게임 시작
         // 플레이어와 딜러에게 카드 2장씩 배분
