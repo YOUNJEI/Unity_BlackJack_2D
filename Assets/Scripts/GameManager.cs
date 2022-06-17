@@ -204,7 +204,6 @@ public class GameManager : MonoBehaviour
         BTNHit.gameObject.SetActive(false);
         BTNStand.interactable = true;
         BTNHit.interactable = true;
-        
 
         BTNDeal.gameObject.SetActive(true);
         BTNReset.gameObject.SetActive(true);

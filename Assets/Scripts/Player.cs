@@ -195,7 +195,6 @@ public class Player : MonoBehaviour
         {
             Deck.instance.UsedCardCollect(playerCards[i]);
             yield return (new WaitForSeconds(0.7f));
-            playerCards[i].gameObject.SetActive(false);
         }
     }
 

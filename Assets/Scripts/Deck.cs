@@ -54,7 +54,6 @@ public class Deck : MonoBehaviour
         for (int i = 0; i < cards.Length; i++)
         {
             int j = random.Next(i, cards.Length);
-
             Card temp = cards[i];
             cards[i] = cards[j];
             cards[j] = temp;
@@ -66,9 +65,6 @@ public class Deck : MonoBehaviour
         // 덱 새로 생성
         if (curIdx >= cards.Length)
         {
-            // Shuffle
-            for (int i = 0; i < cards.Length; i++)
-                cards[i].gameObject.SetActive(true);
             Shuffle();
             curIdx = 0;
         }
