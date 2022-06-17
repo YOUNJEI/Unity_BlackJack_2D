@@ -44,6 +44,21 @@ public class Deck : MonoBehaviour
             }
         }
         toCollect = 0;
+        Shuffle();
+    }
+
+    private void Shuffle()
+    {
+        System.Random random = new System.Random();
+
+        for (int i = 0; i < cards.Length; i++)
+        {
+            int j = random.Next(i, cards.Length);
+
+            Card temp = cards[i];
+            cards[i] = cards[j];
+            cards[j] = temp;
+        }
     }
 
     public Card Deal()
@@ -54,6 +69,7 @@ public class Deck : MonoBehaviour
             // Shuffle
             for (int i = 0; i < cards.Length; i++)
                 cards[i].gameObject.SetActive(true);
+            Shuffle();
             curIdx = 0;
         }
         curIdx++;
