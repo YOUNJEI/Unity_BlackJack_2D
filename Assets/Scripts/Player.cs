@@ -198,4 +198,13 @@ public class Player : MonoBehaviour
             playerCards[i].gameObject.SetActive(false);
         }
     }
+
+    public bool IsBlackJack()
+    {
+        if (playerScore != 21)
+            return (false);
+        if (playerCards.Count != 2)
+            return (false);
+        return (true);
+    }
 }

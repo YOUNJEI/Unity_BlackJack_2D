@@ -155,7 +155,22 @@ public class GameManager : MonoBehaviour
         dealer.SetIsDealer(true);
         yield return (new WaitForSeconds(1.5f));
 
-        if (player.GetIsBurst() == true)
+        if (player.IsBlackJack() == true)
+        {
+            if (dealer.IsBlackJack() == true)
+            {
+                player.SetMoney(player.GetMoney() + player.GetBetMoney());
+                player.SetBetMoney(0);
+                Debug.Log("무승부");
+            }
+            else
+            {
+                player.SetMoney(player.GetMoney() + player.GetBetMoney() * 3);
+                player.SetBetMoney(0);
+                UIManager.instance.UpdateGameResult(3); // Blackjack !
+            }
+        }
+        else if (player.GetIsBurst() == true)
         {
             player.SetBetMoney(0);
             UIManager.instance.UpdateGameResult(2); // You lose

@@ -8,6 +8,7 @@ public class UIManager : MonoBehaviour
 {
     public GameObject winSprite;
     public GameObject loseSprite;
+    public GameObject blackjackWin;
 
     private bool gameResultTrigger = false;
     private static UIManager m_instance;
@@ -67,6 +68,10 @@ public class UIManager : MonoBehaviour
                 loseSprite.SetActive(true);
                 break;
 
+            case 3:
+                blackjackWin.SetActive(true);
+                break;
+
             default:
                 return;
         }
@@ -82,6 +87,7 @@ public class UIManager : MonoBehaviour
                 gameResultTrigger = false;
                 winSprite.SetActive(false);
                 loseSprite.SetActive(false);
+                blackjackWin.SetActive(false);
             }
         }
     }
