@@ -158,18 +158,18 @@ public class GameManager : MonoBehaviour
         if (player.GetIsBurst() == true)
         {
             player.SetBetMoney(0);
-            Debug.Log("플레이어 파산");
+            UIManager.instance.UpdateGameResult(2); // You lose
         }
         else if (dealer.GetIsBurst() == true)
         {
             player.SetMoney((long)(player.GetMoney() + player.GetBetMoney() * 2.5f));
             player.SetBetMoney(0);
-            Debug.Log("딜러 파산");
+            UIManager.instance.UpdateGameResult(1); // You win
         }
         else if (dealer.GetScore() > player.GetScore())
         {
             player.SetBetMoney(0);
-            Debug.Log("플레이어 패배");
+            UIManager.instance.UpdateGameResult(2); // You lose
         }
         else if (dealer.GetScore() == player.GetScore())
         {
@@ -181,7 +181,7 @@ public class GameManager : MonoBehaviour
         {
             player.SetMoney((long)(player.GetMoney() + player.GetBetMoney() * 2.5f));
             player.SetBetMoney(0);
-            Debug.Log("플레이어 승리");
+            UIManager.instance.UpdateGameResult(1); // You win
         }
         player.CardReturn();
         dealer.CardReturn();

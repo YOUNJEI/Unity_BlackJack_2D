@@ -6,6 +6,10 @@ using UnityEngine.UI;
 // UI매니저
 public class UIManager : MonoBehaviour
 {
+    public GameObject winSprite;
+    public GameObject loseSprite;
+
+    private bool gameResultTrigger = false;
     private static UIManager m_instance;
     public static UIManager instance
     {
@@ -49,5 +53,36 @@ public class UIManager : MonoBehaviour
 
         refText.text = "Hand: " + score;
         refText.gameObject.SetActive(true);
+    }
+
+    public void UpdateGameResult(int gameResult)
+    {
+        switch (gameResult)
+        {
+            case 1:
+                winSprite.SetActive(true);
+                break;
+
+            case 2:
+                loseSprite.SetActive(true);
+                break;
+
+            default:
+                return;
+        }
+        gameResultTrigger = true;
+    }
+
+    void Update()
+    {
+        if (gameResultTrigger)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                gameResultTrigger = false;
+                winSprite.SetActive(false);
+                loseSprite.SetActive(false);
+            }
+        }
     }
 }
