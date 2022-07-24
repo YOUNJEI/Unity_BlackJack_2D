@@ -45,7 +45,14 @@ public class LoginManager : MonoBehaviour
 
     public void LoginAccessBTNClicked()
     {
-        StartCoroutine(LoginAccessCo());
+        string ID = IdInputField.text.ToString();
+        string PASSWORD = PasswordInputField.text.ToString();
+
+        if (IsValidatedID(ID) == LoginErrorCode.OK
+            && IsValidatedPassword(PASSWORD) == LoginErrorCode.OK)
+        {
+            StartCoroutine(LoginAccess(ID, PASSWORD));
+        }
     }
 
     public void CreateAccountBTNClicked()
@@ -59,7 +66,8 @@ public class LoginManager : MonoBehaviour
         string ID = NewIdInputField.text.ToString();
         string PASSWORD = NewPasswordInputField.text.ToString();
 
-        if (IsValidatedID(ID) == LoginErrorCode.OK)
+        if (IsValidatedID(ID) == LoginErrorCode.OK
+            && IsValidatedPassword(PASSWORD) == LoginErrorCode.OK)
         {
             StartCoroutine(CreateAccount(ID, PASSWORD));
         }
@@ -80,11 +88,30 @@ public class LoginManager : MonoBehaviour
         }
     }
 
-    private IEnumerator LoginAccessCo()
+    private IEnumerator LoginAccess(string ID, string PASSWORD)
     {
-        Debug.Log(IdInputField.text);
-        Debug.Log(PasswordInputField.text);
-        yield return null;
+        const string url = "https://kyj951211.cafe24.com/BJK/login.php";
+        WWWForm form = new WWWForm();
+
+        form.AddField("ID", ID);
+        form.AddField("PASSWORD", PASSWORD);
+
+        using (UnityWebRequest www = UnityWebRequest.Post(url, form))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(www.error);
+                Debug.Log(www.downloadHandler.text);
+            }
+            else
+            {
+                Debug.Log(www.downloadHandler.text);
+                LoginPanel.SetActive(false);
+                SetActiveUIBTNs(true);
+            }
+        }
     }
     
     private IEnumerator CreateAccount(string ID, string PASSWORD)
@@ -116,6 +143,13 @@ public class LoginManager : MonoBehaviour
     private LoginErrorCode IsValidatedID(string ID)
     {
         if (ID.Length < 3)
+            return LoginErrorCode.LENGTH_ERROR;
+        return LoginErrorCode.OK;
+    }
+
+    private LoginErrorCode IsValidatedPassword(string password)
+    {
+        if (password.Length < 1)
             return LoginErrorCode.LENGTH_ERROR;
         return LoginErrorCode.OK;
     }
