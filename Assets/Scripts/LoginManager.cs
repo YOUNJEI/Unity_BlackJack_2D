@@ -2,11 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 public class LoginManager : MonoBehaviour
 {
-    [Header("LoginPanel")]
-    public Button LoginBTN;
     [Header("LoginPanel")]
     public InputField IdInputField;
     public InputField PasswordInputField;
@@ -15,8 +14,14 @@ public class LoginManager : MonoBehaviour
     [Header("CreateAccountPanel")]
     public InputField NewIdInputField;
     public InputField NewPasswordInputField;
+    public Button OKBTN;
+    public Button CancelBTN;
     [Header("LobbyUIButton")]
+    public Button LoginBTN;
     public Button[] UIButtons;
+
+    private GameObject LoginPanel;
+    private GameObject CreateAccountPanel;
 
     private string LoginUrl;
 
@@ -25,21 +30,17 @@ public class LoginManager : MonoBehaviour
         LoginBTN.onClick.AddListener(() => LoginBTNClicked());
         LoginAccessBTN.onClick.AddListener(() => LoginAccessBTNClicked());
         CreateAccountBTN.onClick.AddListener(() => CreateAccountBTNClicked());
+        OKBTN.onClick.AddListener(() => OKBTNClicked());
+        CancelBTN.onClick.AddListener(() => CancelBTNClicked());
+
+        LoginPanel = GameObject.Find("Canvas").transform.Find("LoginPanel").gameObject;
+        CreateAccountPanel = GameObject.Find("Canvas").transform.Find("CreateAccountPanel").gameObject;
     }
 
     public void LoginBTNClicked()
     {
         SetActiveUIBTNs(false);
-
-        GameObject LoginPanel = GameObject.Find("Canvas").transform.Find("LoginPanel").gameObject;
-        if (LoginPanel != null)
-        {
-            LoginPanel.SetActive(true);
-        }
-        else
-        {
-            SetActiveUIBTNs(true);
-        }
+        LoginPanel.SetActive(true);
     }
 
     public void LoginAccessBTNClicked()
@@ -47,23 +48,75 @@ public class LoginManager : MonoBehaviour
         StartCoroutine(LoginAccessCo());
     }
 
-    IEnumerator LoginAccessCo()
+    public void CreateAccountBTNClicked()
+    {
+        LoginPanel.SetActive(false);
+        CreateAccountPanel.SetActive(true);
+    }
+
+    public void OKBTNClicked()
+    {
+        string ID = NewIdInputField.text.ToString();
+        string PASSWORD = NewPasswordInputField.text.ToString();
+
+        if (IsValidatedID(ID) == LoginErrorCode.OK)
+        {
+            StartCoroutine(CreateAccount(ID, PASSWORD));
+        }
+    }
+
+    public void CancelBTNClicked()
+    {
+        CreateAccountPanel.SetActive(false);
+        LoginPanel.SetActive(true);
+    }
+
+    private void SetActiveUIBTNs(bool setBoolean)
+    {
+        LoginBTN.gameObject.SetActive(setBoolean);
+        for (int i = 0; i < UIButtons.Length; i++)
+        {
+            UIButtons[i].gameObject.SetActive(setBoolean);
+        }
+    }
+
+    private IEnumerator LoginAccessCo()
     {
         Debug.Log(IdInputField.text);
         Debug.Log(PasswordInputField.text);
         yield return null;
     }
-
-    public void CreateAccountBTNClicked()
+    
+    private IEnumerator CreateAccount(string ID, string PASSWORD)
     {
+        const string url = "https://kyj951211.cafe24.com/BJK/create_account.php";
+        WWWForm form = new WWWForm();
 
+        form.AddField("ID", ID);
+        form.AddField("PASSWORD", PASSWORD);
+
+        using (UnityWebRequest www = UnityWebRequest.Post(url, form))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(www.error);
+                Debug.Log(www.downloadHandler.text);
+            }
+            else
+            {
+                Debug.Log(www.downloadHandler.text);
+                CreateAccountPanel.SetActive(false);
+                LoginPanel.SetActive(true);
+            }
+        }
     }
 
-    private void SetActiveUIBTNs(bool setBoolean)
+    private LoginErrorCode IsValidatedID(string ID)
     {
-        for (int i = 0; i < UIButtons.Length; i++)
-        {
-            UIButtons[i].gameObject.SetActive(setBoolean);
-        }
+        if (ID.Length < 3)
+            return LoginErrorCode.LENGTH_ERROR;
+        return LoginErrorCode.OK;
     }
 }
