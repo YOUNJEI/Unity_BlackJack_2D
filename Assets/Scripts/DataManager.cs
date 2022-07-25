@@ -1,10 +1,9 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
-public class LoginManager : MonoBehaviour
+public class DataManager : MonoBehaviour
 {
     [Header("LoginPanel")]
     public InputField IdInputField;
@@ -18,12 +17,24 @@ public class LoginManager : MonoBehaviour
     public Button CancelBTN;
     [Header("LobbyUIButton")]
     public Button LoginBTN;
+    public Button LogoutBTN;
     public Button[] UIButtons;
 
     private GameObject LoginPanel;
     private GameObject CreateAccountPanel;
 
-    private string LoginUrl;
+    private PlayerData playerdata;
+
+    private static DataManager m_instance;
+    public static DataManager instance
+    {
+        get
+        {
+            if (m_instance == null)
+                m_instance = FindObjectOfType<DataManager>();
+            return m_instance;
+        }
+    }
 
     void Start()
     {
@@ -32,6 +43,7 @@ public class LoginManager : MonoBehaviour
         CreateAccountBTN.onClick.AddListener(() => CreateAccountBTNClicked());
         OKBTN.onClick.AddListener(() => OKBTNClicked());
         CancelBTN.onClick.AddListener(() => CancelBTNClicked());
+        LogoutBTN.onClick.AddListener(() => LogoutBTNClicked());
 
         LoginPanel = GameObject.Find("Canvas").transform.Find("LoginPanel").gameObject;
         CreateAccountPanel = GameObject.Find("Canvas").transform.Find("CreateAccountPanel").gameObject;
@@ -79,6 +91,15 @@ public class LoginManager : MonoBehaviour
         LoginPanel.SetActive(true);
     }
 
+    public void LogoutBTNClicked()
+    {
+        playerdata = null;
+        UIButtons[0].interactable = false;
+        UIButtons[1].interactable = false;
+        LogoutBTN.gameObject.SetActive(false);
+        LoginBTN.gameObject.SetActive(true);
+    }
+
     private void SetActiveUIBTNs(bool setBoolean)
     {
         LoginBTN.gameObject.SetActive(setBoolean);
@@ -108,8 +129,20 @@ public class LoginManager : MonoBehaviour
             else
             {
                 Debug.Log(www.downloadHandler.text);
+
+                // JSON을 객체로 변환
+                playerdata = PlayerData.CreateFromJSON(www.downloadHandler.text);
+
+                // UI
                 LoginPanel.SetActive(false);
                 SetActiveUIBTNs(true);
+                LoginBTN.gameObject.SetActive(false);
+                LogoutBTN.transform.GetChild(0).gameObject.GetComponent<Text>().text
+                    = "Welcome \"" + playerdata.GetPlayerNickname() + "\"\n"
+                    + "Your money " + playerdata.GetPlayerMoney().ToString();
+                LogoutBTN.gameObject.SetActive(true);
+                UIButtons[0].interactable = true;
+                UIButtons[1].interactable = true;
             }
         }
     }

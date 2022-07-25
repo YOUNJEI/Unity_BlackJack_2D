@@ -11,6 +11,17 @@ public class LobbyManager : MonoBehaviour
     public Button BTNMultiPlay;
     public Button BTNExitGame;
 
+    private static LobbyManager m_instance;
+    public static LobbyManager instance
+    {
+        get
+        {
+            if (m_instance == null)
+                m_instance = FindObjectOfType<LobbyManager>();
+            return m_instance;
+        }
+    }
+
     // 버튼 리스너 등록
     void Start()
     {
