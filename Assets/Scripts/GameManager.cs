@@ -217,6 +217,7 @@ public class GameManager : MonoBehaviour
         Deck.instance.SetToCollect(player.GetCardCount() + dealer.GetCardCount());
         trigger = true;
         player.handText.gameObject.SetActive(false);
+        DataManager.instance.UpdateGameResult(player.GetPlayerID(), player.GetMoney());
         UIManager.instance.UpdatePlayerInfo(player.playerInfoText, player.GetPlayerName(), player.GetMoney());
         dealer.handText.gameObject.SetActive(false);
     }

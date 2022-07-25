@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     public Text playerInfoText;
 
     public bool isDealer = false;
+    private string playerID;
     private string playerName;
     private int playerScore;
     private List<Card> playerCards;
@@ -19,6 +20,7 @@ public class Player : MonoBehaviour
     private bool isBurst;
     private int hasAce;
 
+    public string GetPlayerID() { return playerID; }
     public string GetPlayerName() { return (playerName); }
     public int GetScore() { return (playerScore); }
     public void SetIsDealer(bool boolean) { isDealer = boolean; }
@@ -44,12 +46,13 @@ public class Player : MonoBehaviour
     // UI 업데이트
     void Start()
     {
-        playerName = "void";
-        playerScore = 0;
+        playerID = DataManager.instance.GetPlayerID();
+        playerName = DataManager.instance.GetPlayerNickname();
+        money = DataManager.instance.GetPlayerMoney();
 
+        playerScore = 0;
         playerCards = new List<Card>();
-        
-        money = 1000000;
+
         betMoney = 0;
         sortLayerIdx = 1;
         isBurst = false;

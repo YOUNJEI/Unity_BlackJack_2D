@@ -80,3 +80,4 @@ Thumbs.db
 # PHP #
 create_account.php
 login.php
+update_gameresult.php

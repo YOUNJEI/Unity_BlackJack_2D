@@ -23,7 +23,11 @@ public class DataManager : MonoBehaviour
     private GameObject LoginPanel;
     private GameObject CreateAccountPanel;
 
+    // 유저 데이터
     private PlayerData playerdata;
+    public string GetPlayerID() { return playerdata.GetPlayerID(); }
+    public string GetPlayerNickname() { return playerdata.GetPlayerNickname(); }
+    public long GetPlayerMoney() { return playerdata.GetPlayerMoney(); }
 
     private static DataManager m_instance;
     public static DataManager instance
@@ -47,6 +51,7 @@ public class DataManager : MonoBehaviour
 
         LoginPanel = GameObject.Find("Canvas").transform.Find("LoginPanel").gameObject;
         CreateAccountPanel = GameObject.Find("Canvas").transform.Find("CreateAccountPanel").gameObject;
+        DontDestroyOnLoad(this);
     }
 
     public void LoginBTNClicked()
@@ -98,6 +103,36 @@ public class DataManager : MonoBehaviour
         UIButtons[1].interactable = false;
         LogoutBTN.gameObject.SetActive(false);
         LoginBTN.gameObject.SetActive(true);
+    }
+
+    public void UpdateGameResult(string id, long money)
+    {
+        StartCoroutine(UpdateGameResultCo(id, money));
+    }
+
+    private IEnumerator UpdateGameResultCo(string id, long money)
+    {
+        const string url = "https://kyj951211.cafe24.com/BJK/update_gameresult.php";
+
+        WWWForm form = new WWWForm();
+
+        form.AddField("ID", id);
+        form.AddField("MONEY", money.ToString());
+
+        using (UnityWebRequest www = UnityWebRequest.Post(url, form))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(www.error);
+                Debug.Log(www.downloadHandler.text);
+            }
+            else
+            {
+                Debug.Log(www.downloadHandler.text);
+            }
+        }
     }
 
     private void SetActiveUIBTNs(bool setBoolean)
