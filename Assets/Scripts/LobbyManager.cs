@@ -105,6 +105,18 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public override void OnJoinRandomFailed(short returnCode, string message)
+    {
+        connectinInfoText.text = "There is a no room, Create a new room...";
+        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 4 });
+    }
+
+    public override void OnJoinedRoom()
+    {
+        connectinInfoText.text = "Enter the room";
+        PhotonNetwork.LoadLevel("Table");
+    }
+
     private void ExitGameClicked()
     {
         Application.Quit();
